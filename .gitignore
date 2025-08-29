@@ -33,3 +33,9 @@ outputs/
 /test
 .gitlab
 
+# added 
+*.pth
+*.fbx
+*.npy
+chamber/tasks/ase_humanoid_base/poselib/
+chamber/wandb/
