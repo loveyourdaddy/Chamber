@@ -1,7 +1,9 @@
 """
 conda activate timechamber
 python train.py task=MA_Humanoid_Strike headless=True
-python train.py task=MA_Humanoid_Strike train=MA_Humanoid_StrikeHRL test=True num_envs=4 minibatch_size=32 headless=False checkpoint='runs/Humanoid_29-17-51-44/nn/last_Humanoid_ep_1550_rew_621.6523.pth' op_checkpoint='runs/Humanoid_29-17-51-44/nn/last_Humanoid_ep_1550_rew_621.6523.pth'
+python train.py task=MA_Humanoid_Strike train=MA_Humanoid_StrikeHRL test=True num_envs=4 minibatch_size=32 headless=False checkpoint='runs/Humanoid_01-14-31-57/nn/last_Humanoid_ep_150_rew_496.63965.pth' op_checkpoint='runs/Humanoid_01-14-31-57/nn/last_Humanoid_ep_150_rew_496.63965.pth'
+python train.py task=MA_Humanoid_Strike train=MA_Humanoid_StrikeHRL test=True num_envs=4 minibatch_size=32 headless=False checkpoint='runs/Humanoid_01-14-31-57/nn/last_Humanoid_ep_150_rew_496.63965.pth'
+
 """
 
 # train.py
