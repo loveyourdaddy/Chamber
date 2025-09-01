@@ -46,7 +46,7 @@ player_pool_type: ''
 num_agents: 2
 
 # HRL Arguments
-motion_file: 'tasks/data/motions/reallusion_sword_shield/RL_Avatar_Idle_Ready_Motion.npy'
+motion_file: 'tasks/data/motions/reallusion_sword_shield/RL_Avatar_Idle_Ready_Motion.npy' # TODO humanoid greeting otion 
 
 # set to True to use multi-gpu horovod training
 multi_gpu: False

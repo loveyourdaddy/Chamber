@@ -108,20 +108,16 @@ class HumanoidStrike(humanoid_amp_task.HumanoidAMPTask):
     def _reset_actors(self, env_ids):
         positions = torch_rand_float(-0.2, 0.2, (len(env_ids), self.num_dof), device=self.device)
         velocities = torch_rand_float(-0.1, 0.1, (len(env_ids), self.num_dof), device=self.device)
-        self._dof_pos[env_ids] = tensor_clamp(self._initial_dof_pos[env_ids] + positions, self.dof_limits_lower,
-                                             self.dof_limits_upper)
+        self._dof_pos[env_ids] = tensor_clamp(self._initial_dof_pos[env_ids] + positions, self.dof_limits_lower, self.dof_limits_upper)
         self._dof_vel[env_ids] = velocities
 
-        self._dof_pos_op[env_ids] = tensor_clamp(self._initial_dof_pos[env_ids] + positions, self.dof_limits_lower,
-                                                self.dof_limits_upper)
+        self._dof_pos_op[env_ids] = tensor_clamp(self._initial_dof_pos[env_ids] + positions, self.dof_limits_lower, self.dof_limits_upper)
         self._dof_vel_op[env_ids] = velocities
 
         agent_env_ids = expand_env_ids(env_ids, 2)
 
         rand_angle = torch.rand((len(env_ids),), device=self.device) * math.pi * 2
-        rand_pos = torch.ones((len(agent_env_ids), 2), device=self.device) * (
-                self.borderline_space * torch.ones((len(agent_env_ids), 2), device=self.device) - torch.rand(
-            (len(agent_env_ids), 2), device=self.device) * 2)
+        rand_pos = torch.ones((len(agent_env_ids), 2), device=self.device) * (self.borderline_space * torch.ones((len(agent_env_ids), 2), device=self.device) - torch.rand((len(agent_env_ids), 2), device=self.device) * 2)
         rand_pos[0::2, 0] *= torch.cos(rand_angle)
         rand_pos[0::2, 1] *= torch.sin(rand_angle)
         rand_pos[1::2, 0] *= torch.cos(rand_angle + math.pi)

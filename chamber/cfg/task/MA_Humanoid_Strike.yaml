@@ -33,6 +33,7 @@ env:
   asset:
     assetRoot: "tasks/data/assets"
     assetFileName: "mjcf/amp_humanoid_sword_shield.xml"
+    # assetFileName: "mjcf/amp_humanoid.xml"
 
   plane:
     staticFriction: 1.0

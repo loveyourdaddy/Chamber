@@ -185,7 +185,7 @@ class HRLSPAgent(hrl_agent.HRLAgent):
         draw_count = 0.0
 
         for t in range(self._llc_steps):
-            llc_ego_actions = self._compute_llc_action(obs, ego_actions)
+            llc_ego_actions = self._compute_llc_action(obs, ego_actions) # defined in parent (hrl_agent)
             llc_op_actions = self._compute_llc_action(obs_op, op_actions)
             llc_actions = torch.cat((llc_ego_actions, llc_op_actions), dim=0)
 
