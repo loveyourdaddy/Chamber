@@ -36,6 +36,6 @@ outputs/
 # added 
 *.pth
 *.fbx
-*.npy
+# *.npy
 chamber/tasks/ase_humanoid_base/poselib/
 chamber/wandb/
