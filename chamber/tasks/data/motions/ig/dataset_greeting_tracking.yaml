@@ -1,0 +1,5 @@
+motions:
+    - file: "greeting002_S1_30fps_amp.npy"
+      weight: 0.5
+    - file: "greeting002_S2_30fps_amp.npy"
+      weight: 0.5
