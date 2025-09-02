@@ -187,30 +187,14 @@ class Humanoid(BaseTask):
                 lines3 = []
                 lines4 = []
                 for i in range(90):
-                    begin_point1 = [-self.borderline_space + i * self.borderline_space / 45,
-                                self.borderline_space,
-                                height*0.01+ k*0.25]
-                    end_point1 = [-self.borderline_space + (i+1) * self.borderline_space / 45,
-                                self.borderline_space,
-                                height*0.01+ k*0.25]
-                    begin_point2 = [self.borderline_space,
-                                self.borderline_space - i * self.borderline_space / 45,
-                                height*0.01+ k*0.25]
-                    end_point2 = [self.borderline_space,
-                                self.borderline_space - (i+1) * self.borderline_space / 45,
-                                height*0.01+ k*0.25]
-                    begin_point3 = [self.borderline_space - i * self.borderline_space / 45,
-                                -self.borderline_space,
-                                height*0.01+ k*0.25]
-                    end_point3 = [self.borderline_space - (i+1) * self.borderline_space / 45,
-                                -self.borderline_space,
-                                height*0.01+ k*0.25]
-                    begin_point4 = [-self.borderline_space ,
-                                -self.borderline_space + i * self.borderline_space / 45,
-                                height*0.01+ k*0.25]
-                    end_point4 = [-self.borderline_space,
-                                -self.borderline_space + (i+1) * self.borderline_space / 45,
-                                height*0.01+ k*0.25]
+                    begin_point1 = [-self.borderline_space + i * self.borderline_space / 45, self.borderline_space, height*0.01+ k*0.25]
+                    end_point1 = [-self.borderline_space + (i+1) * self.borderline_space / 45, self.borderline_space, height*0.01+ k*0.25]
+                    begin_point2 = [self.borderline_space, self.borderline_space - i * self.borderline_space / 45, height*0.01+ k*0.25]
+                    end_point2 = [self.borderline_space, self.borderline_space - (i+1) * self.borderline_space / 45, height*0.01+ k*0.25]
+                    begin_point3 = [self.borderline_space - i * self.borderline_space / 45, -self.borderline_space, height*0.01+ k*0.25]
+                    end_point3 = [self.borderline_space - (i+1) * self.borderline_space / 45, -self.borderline_space, height*0.01+ k*0.25]
+                    begin_point4 = [-self.borderline_space , -self.borderline_space + i * self.borderline_space / 45, height*0.01+ k*0.25]
+                    end_point4 = [-self.borderline_space, -self.borderline_space + (i+1) * self.borderline_space / 45, height*0.01+ k*0.25]
                     lines1.append(begin_point1)
                     lines1.append(end_point1)
                     lines2.append(begin_point2)
@@ -621,6 +605,9 @@ class Humanoid(BaseTask):
 
         self.extras["terminate"] = self._terminate_buf
 
+        # 로그
+        # self._debug_print_reference_info()
+        
         # debug viz
         if self.viewer and self.debug_viz:
             self._update_debug_viz()
@@ -662,9 +649,112 @@ class Humanoid(BaseTask):
         pd_tar = self._pd_action_offset + self._pd_action_scale * action
         return pd_tar
 
+    # debug 
     def _update_debug_viz(self):
-        self.gym.clear_lines(self.viewer)
+        self.gym.clear_lines(self.viewer) # this removes the borderline
+        
+        # draw reference trajectory
+        self._draw_reference_trajectory()
+            
+        # 현재 프레임의 key body 구조 
+        # self._draw_key_body_crosses()
+        
         return
+    
+    def _draw_reference_trajectory(self):
+        """미래 reference 궤적을 선으로 그리기"""
+        future_steps = 30  # 3초간 (0.1초 간격)
+        dt = 0.1
+        
+        for env_id in range(min(4, self.num_envs)):  # 첫 4개 환경만
+            # 미래 시점들
+            future_times = self._ref_motion_times[env_id] + torch.arange(0, future_steps * dt, dt, device=self.device)
+            motion_ids = torch.full((future_steps,), self._ref_motion_ids[env_id], device=self.device)
+            
+            # root_pos, root_rot, dof_pos, root_vel, root_ang_vel, dof_vel, key_pos
+            ref_positions, ref_rotations, ref_dof_pos, _, _, _, ref_key_pos = self._motion_lib.get_motion_state(motion_ids, future_times)
+            
+            # 모든 key body 위치 그리기 (17개 주요 body parts)
+            self._draw_all_joint_trajectories(env_id, ref_key_pos, future_steps)
+  
+    def _draw_all_joint_trajectories(self, env_id, ref_key_pos, future_steps):
+        """모든 key body의 궤적을 그리기"""
+        # ref_key_pos shape: (future_steps, num_key_bodies, 3)
+        num_key_bodies = ref_key_pos.shape[1]
+        
+        # 각 body part별로 다른 색상
+        colors = [
+            [1.0, 0.0, 0.0],  # 빨강 - head
+            [0.0, 1.0, 0.0],  # 초록 - torso  
+            [0.0, 0.0, 1.0],  # 파랑 - arms
+            [1.0, 1.0, 0.0],  # 노랑 - legs
+            [1.0, 0.0, 1.0],  # 자홍 - hands
+            [0.0, 1.0, 1.0],  # 청록 - feet
+            [0.5, 0.5, 0.5],  # 회색 - etc
+        ]
+        
+        for body_id in range(num_key_bodies):
+            color_idx = body_id % len(colors)
+            body_color = colors[color_idx]
+            
+            # 이 body의 궤적 점들
+            points = []
+            for i in range(future_steps - 1):
+                pos1 = ref_key_pos[i, body_id].cpu().numpy()
+                pos2 = ref_key_pos[i + 1, body_id].cpu().numpy()
+                
+                # points.extend([pos1[0], pos1[1], pos1[2], pos2[0], pos2[1], pos2[2]])
+                points.append(pos1)
+                points.append(pos2)
+            points = np.array(points, dtype=np.float32)
+            num_lines = len(points) // 6
+            self.gym.add_lines(self.viewer, self.envs[env_id], num_lines, points, body_color)
+    
+    def _draw_key_body_crosses(self):
+        """6개 key body를 십자로 표시 (더 간단한 방법)"""
+        if not hasattr(self, '_ref_motion_ids'):
+            return
+            
+        _, _, _, _, _, _, ref_key_pos = \
+            self._motion_lib.get_motion_state(self._ref_motion_ids[:1], self._ref_motion_times[:1])
+        
+        env_id = 0
+        current_key_pos = ref_key_pos[0]  # (6, 3)
+        print(f">> time: {self._ref_motion_times[0].item():.3f} current_key_pos: {current_key_pos}")
+        
+        colors = [
+            [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0],
+            [1.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 1.0, 1.0]
+        ]
+        
+        cross_size = 0.05
+        
+        for i in range(6):
+            pos = current_key_pos[i].cpu().numpy()
+            color = colors[i]
+            
+            # 3축 십자 그리기
+            points = [
+                # X축
+                pos[0]-cross_size, pos[1], pos[2], pos[0]+cross_size, pos[1], pos[2],
+                # Y축  
+                pos[0], pos[1]-cross_size, pos[2], pos[0], pos[1]+cross_size, pos[2],
+                # Z축
+                pos[0], pos[1], pos[2]-cross_size, pos[0], pos[1], pos[2]+cross_size,
+            ]
+            
+            self.gym.add_lines(self.viewer, self.envs[env_id], 3, points, color)
+    
+    # text
+    def _debug_print_reference_info(self):
+        # 첫 번째 환경의 정보만 출력 (너무 많으면 로그가 넘침)
+        if self.progress_buf[0] % 60 == 0:  # 1초마다 출력
+            ref_root_pos, ref_root_rot, ref_dof_pos, _, _, _, _ = \
+                self._motion_lib.get_motion_state(self._ref_motion_ids[:1], self._ref_motion_times[:1])
+            
+            current_pos = self._humanoid_root_states[0, 0:3] # 1번 update되고 그 이후로는 안됨. sequence로 반복하게 만들어야해.
+            
+            print(f"Env 0 - Current: {current_pos.cpu().numpy()}, Target: {ref_root_pos[0].cpu().numpy()}, Distance: {torch.norm(current_pos - ref_root_pos[0]).item():.3f}")
 
 #####################################################################
 ###=========================jit functions=========================###
