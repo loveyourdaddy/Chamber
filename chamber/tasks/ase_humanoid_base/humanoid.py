@@ -654,16 +654,16 @@ class Humanoid(BaseTask):
         self.gym.clear_lines(self.viewer) # this removes the borderline
         
         # draw reference trajectory
-        self._draw_reference_trajectory()
-            
+        # self._draw_reference_trajectory()
+        
         # 현재 프레임의 key body 구조 
-        # self._draw_key_body_crosses()
+        self._draw_key_body_crosses()
         
         return
     
     def _draw_reference_trajectory(self):
         """미래 reference 궤적을 선으로 그리기"""
-        future_steps = 30  # 3초간 (0.1초 간격)
+        future_steps = 10  # 3초간 (0.1초 간격)
         dt = 0.1
         
         for env_id in range(min(4, self.num_envs)):  # 첫 4개 환경만

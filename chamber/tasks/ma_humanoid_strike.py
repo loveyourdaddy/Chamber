@@ -212,7 +212,15 @@ class HumanoidStrike(humanoid_amp_task.HumanoidAMPTask): # tracking
 
     def pre_physics_step(self, actions):
         super().pre_physics_step(actions)
-        self._ref_motion_times += self.dt # import pdb; pdb.set_trace()
+        self._ref_motion_times += self.dt
+        
+        # 처음부터 다시 시작
+        motion_lengths = self._motion_lib.get_motion_length(self._ref_motion_ids)
+        exceeded_mask = self._ref_motion_times >= motion_lengths
+        if exceeded_mask.any():
+            print("motion end, start again: ", torch.sum(exceeded_mask).item())
+            self._ref_motion_times[exceeded_mask] = 0.0
+        
         return
 
     def post_physics_step(self):
