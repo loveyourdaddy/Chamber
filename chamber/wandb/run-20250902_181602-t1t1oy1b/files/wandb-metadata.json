@@ -1,0 +1,44 @@
+{
+  "os": "Linux-5.15.0-139-generic-x86_64-with-glibc2.17",
+  "python": "CPython 3.8.20",
+  "startedAt": "2025-09-02T09:16:02.054952Z",
+  "args": [
+    "task=MA_Humanoid_Strike",
+    "headless=True"
+  ],
+  "program": "train.py",
+  "codePath": "chamber/train.py",
+  "codePathLocal": "train.py",
+  "git": {
+    "remote": "https://github.com/loveyourdaddy/Chamber.git",
+    "commit": "d6c2bfb2161edc410fb6473393b7dcf673bfced3"
+  },
+  "email": "isjang08@kaist.ac.kr",
+  "root": "/home/inseo/_chamber/chamber/chamber",
+  "host": "inseo-X570-AORUS-PRO",
+  "executable": "/home/inseo/anaconda3/envs/timechamber/bin/python",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 3080",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "1006450962432",
+      "used": "898542649344"
+    }
+  },
+  "memory": {
+    "total": "135003836416"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 3080",
+      "memoryTotal": "10737418240",
+      "cudaCores": 8704,
+      "architecture": "Ampere",
+      "uuid": "GPU-8bdca94b-87c5-d478-e1f8-077363a74ca9"
+    }
+  ],
+  "cudaVersion": "12.2",
+  "writerId": "uos4efpfua2u4d515e7m1b0niga7njxe"
+}
