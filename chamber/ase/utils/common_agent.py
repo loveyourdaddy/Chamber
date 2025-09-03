@@ -442,7 +442,11 @@ class CommonAgent(a2c_continuous.A2CAgent):
             b_loss = torch.mean(b_loss)
             entropy = torch.mean(entropy)
 
-            loss = a_loss + self.critic_coef * c_loss - self.entropy_coef * entropy + self.bounds_loss_coef * b_loss
+            loss = a_loss + self.critic_coef * c_loss + self.bounds_loss_coef * b_loss
+            print(f'a_loss {a_loss.item():.3f} c_loss {c_loss.item():.3f} b_loss {b_loss.item():.3f}')
+            # a_loss 1
+            # critic_coef 5
+            # bounds_loss_coef 10
             
             a_clip_frac = torch.mean(a_info['actor_clipped'].float())
             

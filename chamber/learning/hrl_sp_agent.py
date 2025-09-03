@@ -84,8 +84,8 @@ class HRLSPAgent(hrl_agent.HRLAgent):
             res_dict_op = self.get_action_values(self.obs, is_op=True)
             res_dict = self.get_action_values(self.obs)
             
+            # added 
             for k in update_list:
-                # self.experience_buffer.update_data(k, n, res_dict[k])
                 if hasattr(res_dict_op, k): 
                     tmp = torch.cat((res_dict[k], res_dict_op[k]), dim=0)
                 else:
@@ -116,10 +116,8 @@ class HRLSPAgent(hrl_agent.HRLAgent):
             
             self.experience_buffer.update_data('rewards', n, shaped_rewards)
             self.experience_buffer.update_data('next_obses', n, self.obs['obs'])
-            # self.experience_buffer.update_data('dones', n, self.dones)
-            self.experience_buffer.update_data('dones', n, dones)
-            # self.experience_buffer.update_data('disc_rewards', n, infos['disc_rewards'])
-            self.experience_buffer.update_data('disc_rewards', n, disc_rewards)
+            self.experience_buffer.update_data('dones', n, dones) # self.dones
+            self.experience_buffer.update_data('disc_rewards', n, disc_rewards) # infos['disc_rewards']
 
             terminated = infos['terminate'].float()
             terminated = terminated.unsqueeze(-1)

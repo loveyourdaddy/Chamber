@@ -676,7 +676,7 @@ class Humanoid(BaseTask):
             
             # 모든 key body 위치 그리기 (17개 주요 body parts)
             self._draw_all_joint_trajectories(env_id, ref_key_pos, future_steps)
-  
+
     def _draw_all_joint_trajectories(self, env_id, ref_key_pos, future_steps):
         """모든 key body의 궤적을 그리기"""
         # ref_key_pos shape: (future_steps, num_key_bodies, 3)

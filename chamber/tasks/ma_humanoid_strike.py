@@ -373,7 +373,7 @@ def compute_motion_tracking_reward(root_states, body_pos, body_vel, dof_pos, dof
               w_dof_pos * dof_pos_reward +
               w_dof_vel * dof_vel_reward +
               w_key_pos * key_pos_reward)
-              
+    
     return reward
 
 @torch.jit.script
